@@ -1,0 +1,41 @@
+#I have named my dataset waitdata
+waitdata<- read_excel('WaitData.xlsx', sheet=3)
+
+#Here I am naming a few of the variables in order to simplify the analytical process 
+days<- waitdata$DayOfYear
+waittime <- waitdata$Wait
+month <- waitdata$Month
+weekday(waitdata$DayOfWeek)
+
+#Next, I will visualize days, months, according to their wait time 
+hist(weekday)
+hist(month)
+hist(days)
+#there seems to be minimal difference in the number of scheduled appointments on each day of the week but there is a 
+#visible drop in appointments in July through October, this is confirmed with the histogram made for days of the week. 
+#This warrants further exploration. 
+
+July <- waitdata[waitdata$Month== '7',]
+August <- waitdata[waitdata$Month== '8',]
+Sept <- waitdata[waitdata$Month== '9',]
+Oct<- waitdata[waitdata$Month== '10',]
+thirdquarter <- rbind(July,August,Sept,Oct)
+
+barplot(thirdquarter$Wait)
+
+#I can see that there is a lot of negative wait time within these months, how does this compare with the rest of the year?
+
+monthlyavg<-tapply(waitdata$Wait, waitdata$Month, FUN = mean)
+barplot(monthlyavg)
+
+#In January, October, November, and December, the average wait time at any moment throughout the day is higher, why is that?
+
+Dayavg <-tapply(waitdata$Wait, waitdata$DayOfYear, FUN = mean)
+barplot(Dayavg)
+# The negative wait time could be playing a role in the average wait time of a patient at this hospital. 
+
+
+
+
+
+
