@@ -53,6 +53,8 @@ calendarsum[order(calendarsum$Freq),]
 
 #On any given day, there are between fourteen and seventy appointments per day.
 mean(calendarsum$Freq)
+#the average number of appointments is 51.26739
+
 
 
 
