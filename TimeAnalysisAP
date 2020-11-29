@@ -1,6 +1,10 @@
 #I have named my dataset waitdata
 waitdata<- read_excel('WaitData.xlsx', sheet=3)
 
+#Other important dataframes/variables:
+#line 22: third quarter dataframe
+
+
 #Here I am naming a few of the variables in order to simplify the analytical process 
 days<- waitdata$DayOfYear
 waittime <- waitdata$Wait
@@ -33,6 +37,22 @@ barplot(monthlyavg)
 Dayavg <-tapply(waitdata$Wait, waitdata$DayOfYear, FUN = mean)
 barplot(Dayavg)
 # The negative wait time could be playing a role in the average wait time of a patient at this hospital. 
+
+
+#How many appointments are there on any given day at this hospital?
+#Lubridate can be used to separate the time stamps into a format that is easier to analyze,
+
+library(lubridate)
+waitdata$parsedappt<-parse_date_time(waitdata$x_ScheduledDTTM, 'y-m-d H:M:S')
+
+waitdata$calendar<-date(waitdata$parsedappt)
+
+#This will help us to figure out the total number of appointments 
+calendarsum<- table(waitdata$calendar)
+calendarsum[order(calendarsum$Freq),]
+
+#On any given day, there are between fourteen and seventy appointments per day.
+mean(calendarsum$Freq)
 
 
 
