@@ -56,6 +56,20 @@ mean(calendarsum$Freq)
 #the average number of appointments is 51.26739
 
 
+# Is there any statistical significance to the day of year and the wait time? I will run regression analysis to see. 
+plot(waitdata$Wait, waitdata$DayOfYear)
+
+daymodel <- lm(Wait~DayOfYear, data=waitdata)
+summary(daymodel)
+
+abline(daymodel, col='blue')
+
+#The multiple R squared is 0.001747 which means that it is not statistically significant but there is some type of signficiant movement in certain times of year 
+#how can we look into this further? Can we use the analysis to narrow down certain parts of the year and analyse it based on that?
+
+#Ideas: Lets separate the data into quarters and analysis based on that.
+
+
 
 
 
