@@ -67,7 +67,12 @@ abline(daymodel, col='blue')
 #The multiple R squared is 0.001747 which means that it is not statistically significant but there is some type of signficiant movement in certain times of year 
 #how can we look into this further? Can we use the analysis to narrow down certain parts of the year and analyse it based on that?
 
-#Ideas: Lets separate the data into quarters and analysis based on that.
+#Idea 1: Lets separate the data into quarters and analysis based on that.
+# Idea 2: Analyise What is going during days when there is negative wait time? Maybe we can separate that time out and see what the wait times are looking 
+#like in departments and what the congestion is looking like. 
+
+#Additional Questions: Should we work with average wait time rather than sum of wiat time?
+
 
 
 
