@@ -1,0 +1,50 @@
+##
+library(readxl)
+WaitData_F3 <- read_excel("Downloads/CodeAndData/Data/WaitData.Published.xlsx", sheet = "F3")
+WaitData_F4 <- read_excel("Downloads/CodeAndData/Data/WaitData.Published.xlsx", sheet = "F4")
+## 
+library(partykit)
+library(Formula)
+library(ggplot2)
+library(factoextra)
+
+## Made Time Variables for poteintal future use 
+
+F3_weekday <- WaitData_F3$DayOfWeek
+F3_month <- WaitData_F3$Month
+
+
+##  Creating Decision Tree better end resut with F3 data/ variables
+
+wait_ctree_1 <- ctree(Wait ~ ExpectedDelayNextExam + AvgWaitByTaskTypeLine, data = WaitData_F3)
+
+plot(wait_ctree_1)
+
+wait_ctree_2 <- ctree(AvgWaitForDay ~ SumTimeToCompleteInProgress, data = WaitData_F4)
+
+plot(wait_ctree_2)
+
+## Creating regression for F3  Congestion data
+
+plot(WaitData_F3$ExpectedDelayNextExam,WaitData_F3$Wait,
+     xlab = 'Expected Delay',
+     ylab = 'Wait',
+     pch = 23)
+fit <- lm(WaitData_F3$Wait~ WaitData_F3$ExpectedDelayNextExam, data = WaitData_F3)
+abline(fit, col ='3')
+coefficients(fit)
+summary(fit)
+plot(fit)
+
+## Creating PCA for F3 Congestion Data 
+
+Test <- WaitData_F3 [,c(52,57,58,77)]
+WaitF3_pca <- prcomp(WaitData_F3 [,c(52,57,58,77)], center = TRUE, scale. = TRUE)
+summary(WaitF3_pca)
+plot(WaitF3_pca$x[,c(2:3)], col=3,)
+
+
+fviz_pca_var(WaitF3_pca, repel = TRUE, geom = 'point')
+fviz_pca_biplot(WaitF3_pca, repel = TRUE, geom = 'point')
+
+head(WaitF3_pca)
