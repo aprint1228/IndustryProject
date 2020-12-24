@@ -1,0 +1,44 @@
+# The below code can be used to create a dataframe for each day in the dataset. 
+
+library(readxl)
+waitdata<- read_excel('WaitData.xlsx', sheet= 3)
+
+#create a column for appointments by days of week 
+ library(lubridate)
+
+waitdata$parsedappt<- parse_date_time(waitdata$x_ScheduledDTTM, 'y-m-d H:M:S')
+ 
+waitdata$calendar<- date(waitdata$parsedappt)
+
+#create a  table to start the data frame 
+calendarsum<- table(waitdata$calendar)
+segmenteddata<- as.data.frame (calendarsum)
+
+colnames(segmenteddata)<- c('date', 'sumofappts')
+
+#add add wait times per day 
+
+segmenteddata$dailywaitsum<-tapply(waitdata$Wait, waitdata$calendar, FUN = sum)
+
+#number of add on per day 
+
+segmenteddata$num_add_ons_today <- tapply(waitdata$NumAddOnsToday, waitdata$calendar, FUN= sum)
+segmenteddata$number_completed_today<-tapply(waitdata$NumCompletedToday, waitdata$calendar, FUN= sum)
+segmentdata$day_of_week<-tapply(waitdata$DayOfWeek, waitdata$calendar, FUN = mean)
+segmenteddata$outpatientwaitcount<-tapply(waitdata$OutpatientWaitingCount, waitdata$calendar, FUN= sum)
+segmenteddata$in_progress_size<-tapply(waitdata$InProgressSize, waitdata$calendar, FUN= sum)
+segmenteddata$ahead_count<-tapply(waitdata$AheadCount, waitdata$calendar, FUN= sum)
+segmenteddata$num_scanners_used_today<-tapply(waitdata$NumScannersUsedToday, waitdata$calendar, FUN= sum)
+segmenteddata$with_and_without_contrast_wait<-tapply(waitdata$WithAndWithoutContrastCountWaiting, waitdata$calendar, FUN= sum)
+segmenteddata$with_or_without_contrast_progress<-tapply(waitdata$WithAndWithoutContrastCountInProgress, waitdata$calendar, FUN= sum)
+segmenteddata$with_contrast_count_waiting<-tapply(waitdata$WithContrastCountWaiting, waitdata$calendar, FUN= sum)
+segmenteddata$delay_count<-tapply(waitdata$DelayCount, waitdata$calendar, FUN= sum)
+segmenteddata$delayed_in_line<-tapply(waitdata$DelayedInLine, waitdata$calendar, FUN= sum)
+segmenteddata$avg_delay_for_day<-tapply(waitdata$AvgDelayForDay, waitdata$calendar, FUN= sum)
+segmenteddata$thoraic_count<-tapply(waitdata$ThoracicCount, waitdata$calendar, FUN= sum)
+segmenteddata$msk_count<-tapply(waitdata$MSKCount, waitdata$calendar, FUN= sum)
+segmenteddata$cardiac_count<-tapply(waitdata$CardiacCount, waitdata$calendar, FUN= sum)
+segmenteddata$vascular_count<-tapply(waitdata$VascularCount, waitdata$calendar, FUN= sum)
+segmenteddata$numbercompleted<-tapply(waitdata$AbdominalCount, waitdata$calendar, FUN= sum)
+segmenteddata$numbercompleted<-tapply(waitdata$NeuroCount, waitdata$calendar, FUN= sum)
+
