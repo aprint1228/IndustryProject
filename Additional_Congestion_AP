@@ -1,0 +1,37 @@
+plot(waitdata$Wait, waitdata$AvgDelayForDay)
+barplot( waitdata$AvgDelayForDay)
+hist(segmenteddata$avg_delay_for_day)
+hist(waitdata$AvgDelayForDay)
+hist(waitdata$maxtime)
+
+mean(waitdata$maxtime)
+#the average max wait time is 21.79447 minutes 
+max(waitdata$maxtime)
+#The longest wait time within this category is 298 minutes
+
+mean(waitdata$mintime)
+#The average min wait time is 6.784506 minutes
+
+hist(waitdata$AheadCount)
+which(waitdata$AheadCount== '40')
+waitdata[3,]
+ 
+
+plot(waitdata$Wait, waitdata$AheadCount)
+Aheadcount_model <- lm(Wait ~AheadCount, data=waitdata)
+abline(Aheadcount_model, col='blue')
+summary(Aheadcount_model)
+# The relationship between wait time and ahead count is statistically significant 
+
+
+barplot(waitdata$SumWaits)
+hist(waitdata$SumWaits)
+mean(waitdata$SumWaits)
+#The average sum of waits is 199 minutes along the data set 
+
+plot(waitdata$Wait, waitdata$SumWaits)
+sumwaits_model<- lm(Wait~SumWaits, data= waitdata)
+abline(sumwaits_model, col= 'orange')
+summary(sumwaits_model)
+#The relationship between wait time and sum waits is signficiantly significant and has
+#a positive correlations
