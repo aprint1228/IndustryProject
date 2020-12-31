@@ -1,0 +1,5 @@
+set.seed(5)
+ran<- sample(1:nrow(waitdata),.75*nrow(busdata))
+
+waitdata_train<- busdata[ran,c(1:2)]
+waitdata_test<- busdata[-ran,c(1:2)]
