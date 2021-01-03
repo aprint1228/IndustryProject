@@ -1,0 +1,173 @@
+Wait_time<-read.csv("Wait_Time.csv")
+colnames(Wait_time)
+head(Wait_time)
+summary(Wait_time)
+
+#rename "wait"
+names(Wait_time)[1]<-"wait"
+colnames(Wait_time)
+
+
+#relevant columns, clean up 
+Wait_relevant<-(Wait_time[,c(1,5:89)])
+colnames(Wait_relevant)
+
+#Transform date format
+
+set.seed(5)
+ran<- sample(1:nrow(Wait_relevant),.75*nrow(Wait_relevant))
+
+waitdata_train<- Wait_relevant[ran,c(1:85)]
+waitdata_test<- Wait_relevant[-ran,c(1:85)]
+
+#create Exploratory model Train
+model1_train<-lm(wait~SumHowEarlyWaiting+AvgHowEarlyWaiting+LineCount0Strict+SumWaits
+                 +LineCount0+LineCount1+LineCount2+LineCount3+LineCount4+SchFlowCount2
+                 +SchFlowCount4+FutFlowCount2+FutFlowCount4+DelayCount+DelayCountLastHour
+                 +mintime+maxtime+AheadCount+ThoracicCount+PediatricCount+NeuroCount+AbdominalCount
+                 +MSKCount+NumScannersUsedToday+SumInProgress+BeforeSlot+Median5+MostRecent2                          
+                 +MostRecent4+MostRecent5+StartTime+StartTime2+StartTime3+IsLast+NoneInProgress+NoneInLine+SumWaitByTaskTypeLine              
+                 +AvgWaitByTaskTypeLine+SumTimeToCompleteInProgress+DelayedInLine+SumDelayWaitingByExamCode+SumDelayWaitingInLine
+                 +SumDelayInProgress+ExpectedDelayNextExam+AvgAgePeopleWaiting+DayOfWeek+DayOfYear+InProgressSize+AvgWaitLastK1Customers
+                 +AvgWaitLastK2Customers+AvgWaitLastK3Customers+NumCompletedToday+NumCompletedInLastW1+NumCompletedInLastW2+NumCompletedInLastW3
+                 +NumCustomersInLastW1+NumCustomersInLastW2+NumCustomersInLastW3+AvgWaitLastW1+AvgWaitLastW2+AvgWaitLastW3+AvgDelayForDay+OutpatientWaitingCount
+                 +MalesWaitingCount+NumAddOnsToday+NumAddOnsLastW2+NumScheduledNextSlot+NumScheduledNextW2+SumTimeToCompleteNextSlot
+                 +SumTimeToCompleteNextW2+WithContrastCountWaiting+WithAndWithoutContrastCountWaiting+WithContrastCountInProgress
+                 ,data = waitdata_train)
+summary(model1_train)
+influence(model1_train)
+vcov(model1_train)
+
+#create Exploratory model Test
+model1_test<-lm(wait~SumHowEarlyWaiting+AvgHowEarlyWaiting+LineCount0Strict+SumWaits
+                 +LineCount0+LineCount1+LineCount2+LineCount3+LineCount4+SchFlowCount2
+                 +SchFlowCount4+FutFlowCount2+FutFlowCount4+DelayCount+DelayCountLastHour
+                 +mintime+maxtime+AheadCount+ThoracicCount+PediatricCount+NeuroCount+AbdominalCount
+                 +MSKCount+NumScannersUsedToday+SumInProgress+BeforeSlot+Median5+MostRecent2                          
+                 +MostRecent4+MostRecent5+StartTime+StartTime2+StartTime3+IsLast+NoneInProgress+NoneInLine+SumWaitByTaskTypeLine              
+                 +AvgWaitByTaskTypeLine+SumTimeToCompleteInProgress+DelayedInLine+SumDelayWaitingByExamCode+SumDelayWaitingInLine
+                 +SumDelayInProgress+ExpectedDelayNextExam+AvgAgePeopleWaiting+DayOfWeek+DayOfYear+InProgressSize+AvgWaitLastK1Customers
+                 +AvgWaitLastK2Customers+AvgWaitLastK3Customers+NumCompletedToday+NumCompletedInLastW1+NumCompletedInLastW2+NumCompletedInLastW3
+                 +NumCustomersInLastW1+NumCustomersInLastW2+NumCustomersInLastW3+AvgWaitLastW1+AvgWaitLastW2+AvgWaitLastW3+AvgDelayForDay+OutpatientWaitingCount
+                 +MalesWaitingCount+NumAddOnsToday+NumAddOnsLastW2+NumScheduledNextSlot+NumScheduledNextW2+SumTimeToCompleteNextSlot
+                 +SumTimeToCompleteNextW2+WithContrastCountWaiting+WithAndWithoutContrastCountWaiting+WithContrastCountInProgress
+                 ,data = waitdata_test)
+summary(model1_test)
+influence(model1_test)
+vcov(model1_test)
+
+#Create a Secondary Model based on the best correlations train
+model2_train<-lm(wait~SumHowEarlyWaiting+AvgHowEarlyWaiting+LineCount0Strict
+                 +LineCount3+SchFlowCount2+SchFlowCount4+FutFlowCount2+DelayCountLastHour
+                  +AheadCount+NumScannersUsedToday+BeforeSlot+StartTime2+StartTime3+IsLast            
+                 +SumTimeToCompleteInProgress+DelayedInLine+SumDelayWaitingByExamCode+
+                  +SumDelayInProgress+DayOfWeek+InProgressSize+AvgWaitLastK1Customers
+                  +AvgWaitLastK3Customers+NumCompletedToday+NumCompletedInLastW1+NumCompletedInLastW2
+                 +AvgDelayForDay
+                  +MalesWaitingCount+NumAddOnsLastW2+NumScheduledNextSlot+NumScheduledNextW2+SumTimeToCompleteNextSlot
+                  +WithAndWithoutContrastCountWaiting
+                  ,data = waitdata_train)
+summary(model2_train)
+
+plot(model2_train)
+
+#Create a Secondary Model based on the best correlations Test
+model2_test<-lm(wait~SumHowEarlyWaiting+AvgHowEarlyWaiting+LineCount0Strict
+                 +LineCount3+SchFlowCount2+SchFlowCount4+FutFlowCount2+DelayCountLastHour
+                 +AheadCount+NumScannersUsedToday+BeforeSlot+StartTime2+StartTime3+IsLast            
+                 +SumTimeToCompleteInProgress+DelayedInLine+SumDelayWaitingByExamCode+
+                   +SumDelayInProgress+DayOfWeek+InProgressSize+AvgWaitLastK1Customers
+                 +AvgWaitLastK3Customers+NumCompletedToday+NumCompletedInLastW1+NumCompletedInLastW2
+                 +AvgDelayForDay
+                 +MalesWaitingCount+NumAddOnsLastW2+NumScheduledNextSlot+NumScheduledNextW2+SumTimeToCompleteNextSlot
+                 +WithAndWithoutContrastCountWaiting
+                 ,data = waitdata_test)
+summary(model2_test)
+
+plot(model2_test)
+
+
+anova(model2_test)
+influence(model2_test)
+vcov(model2_test)
+
+# create another model based on the best correlation from model2 Train
+model3_train<-lm(wait~SumHowEarlyWaiting+AvgHowEarlyWaiting+LineCount0Strict
+                +FutFlowCount2
+                +AheadCount+BeforeSlot+StartTime2+StartTime3+IsLast            
+                +SumTimeToCompleteInProgress+DelayedInLine+SumDelayWaitingByExamCode+
+                  +SumDelayInProgress+InProgressSize+AvgWaitLastK1Customers
+                +AvgWaitLastK3Customers+NumCompletedToday+NumCompletedInLastW1+NumCompletedInLastW2
+                +AvgDelayForDay
+               +NumScheduledNextW2
+                ,data = waitdata_train)
+summary(model3_train)
+
+plot(model3_train)
+
+
+anova(model3_train)
+influence(model3_train)
+vcov(model3_train)
+
+# create another model based on the best correlation from model2 Test
+model3_train<-lm(wait~SumHowEarlyWaiting+AvgHowEarlyWaiting+LineCount0Strict
+                 +FutFlowCount2
+                 +AheadCount+BeforeSlot+StartTime2+StartTime3+IsLast            
+                 +SumTimeToCompleteInProgress+DelayedInLine+SumDelayWaitingByExamCode+
+                   +SumDelayInProgress+InProgressSize+AvgWaitLastK1Customers
+                 +AvgWaitLastK3Customers+NumCompletedToday+NumCompletedInLastW1+NumCompletedInLastW2
+                 +AvgDelayForDay
+                 +NumScheduledNextW2
+                 ,data = waitdata_test)
+summary(model3_test)
+
+plot(model3_test)
+
+
+anova(model3_test)
+influence(model3_test)
+vcov(model3_test)
+
+# create another model based on the best correlation from model3 Train
+model4_train<-lm(wait~SumHowEarlyWaiting+AvgHowEarlyWaiting+LineCount0Strict
+                 +FutFlowCount2
+                 +AheadCount+BeforeSlot+StartTime2+StartTime3+IsLast            
+                 +DelayedInLine+SumDelayWaitingByExamCode+
+                 +SumDelayInProgress+InProgressSize+AvgWaitLastK1Customers
+                 +AvgWaitLastK3Customers+NumCompletedToday
+                 +AvgDelayForDay
+                 +NumScheduledNextW2
+                 ,data = waitdata_train)
+summary(model4_train)
+
+plot(model4_train)
+
+
+anova(model4_train)
+influence(model4_train)
+vcov(model4_train)
+
+# create another model based on the best correlation from model3 Test
+model4_test<-lm(wait~SumHowEarlyWaiting+AvgHowEarlyWaiting+LineCount0Strict
+                 +FutFlowCount2
+                 +AheadCount+BeforeSlot+StartTime2+StartTime3+IsLast            
+                 +DelayedInLine+SumDelayWaitingByExamCode+
+                   +SumDelayInProgress+InProgressSize+AvgWaitLastK1Customers
+                 +AvgWaitLastK3Customers+NumCompletedToday
+                 +AvgDelayForDay
+                 +NumScheduledNextW2
+                 ,data = waitdata_test)
+summary(model4_test)
+
+plot(model4_test)
+
+
+anova(model4_test)
+influence(model4_test)
+vcov(model4_test)
+
+
+
+
+
