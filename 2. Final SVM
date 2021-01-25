@@ -1,0 +1,24 @@
+library(MLmetrics)
+library(e1071)
+wait_time_svm_model <-svm(Wait~DelayCount+InProgressSize+NumCompletedTodaym+AvgDelayForDay
+                          +NumAddOnsToday+AheadCount+OutpatientWaitingCount
+                          +WithContrastCountWaiting+WithAndWithoutContrastCountWaiting
+                          +DelayedInLine+NumScheduledNextW2+InProgressSize+LineCount0Strict+ numberapptstoday
+                          ,data = wait_train2)
+summary(wait_time_svm_model) 
+#predict wait tines using the new SVM model
+predict_wait <- predict(wait_time_svm_model,wait_test2)
+summary(predict_wait)
+#store results in a variable
+svm_result <- data.frame(wait_train2$Wait)
+svm_result <- cbind(svm_result,data.frame(predict_wait))
+names(svm_result)[1] <- "Actual_Wait_Time"
+names(svm_result)[2] <- "Predicted_Wait_Time"
+#now analyze the prediction model performance via different metrics
+#1. Mean Square Error
+error_mse <- MSE(wait_test2$Wait,predict_wait)
+print(error_mse)
+#2. Root Mean Square Error
+error_rmse <- RMSE(y_pred=predict_wait,wait_train2$Wait)
+print(error_rmse)
+#End of SVM Model
