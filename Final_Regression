@@ -1,0 +1,51 @@
+setwd('Desktop/Data Science & Analytics/Industry Project/')
+library(readxl)
+Wait_time<-read_excel("WaitData.xlsx", sheet = 3)
+
+#Now lets lake a look @ summary
+summary(Wait_time)
+head(Wait_time)
+tail(Wait_time)
+##visually inspect wait time
+hist(Wait_time$DelayCount, breaks=100)
+plot(Wait_time$AheadCount, Wait_time$Wait)
+colnames(Wait_time)
+#visually inspect wait time
+hist(Wait_time$Wait, breaks = 100)
+#We can see some outliers
+Wait_time<-subset(Wait_time, Wait_time$Wait>0)
+Wait_time<-subset(Wait_time, Wait_time$Wait<250)
+# lets visually inspect wait time again
+hist(Wait_time$Wait, breaks = 100)
+
+## a new column will be created for number of appointments today"
+
+library(lubridate)
+
+
+# Creating a Regression Model Based on the chosen variables  
+
+Wait_time$parsedappt<- parse_date_time(Wait_time$x_ScheduledDTTM, 'y-m-d H:M:S')
+
+Wait_time$calendar<- date(Wait_time$parsedappt)
+Wait_time$calendar<- as.character(Wait_time$calendar)
+Wait_time$numberapptstoday<- as.numeric(ave(Wait_time$calendar, Wait_time$calendar, FUN = length))
+
+set.seed(123)
+ran<- sample(1:nrow(Wait_time),.75*nrow(Wait_time))
+model2_dataname<-c("Wait","DelayCount","AheadCount","InProgressSize","NumCompletedToday","AvgDelayForDay",
+                   "NumAddOnsToday","OutpatientWaitingCount","WithContrastCountWaiting",
+                   "DelayedInLine","NumScheduledNextW2","InProgressSize","LineCount0Strict", "WithAndWithoutContrastCountWaiting",
+                   "ThoracicCount","NeuroCount","AbdominalCount","VascularCount","CardiacCount",
+                   "MSKCount","NumScannersUsedToday","DayOfWeek", "numberapptstoday")
+wait_train2<- Wait_time[ran,model2_dataname]
+wait_test2<- Wait_time[-ran,model2_dataname]
+model2<-lm(Wait~DelayCount+AheadCount+InProgressSize+NumCompletedToday+AvgDelayForDay+
+             NumAddOnsToday+OutpatientWaitingCount+WithContrastCountWaiting+
+             DelayedInLine+NumScheduledNextW2+InProgressSize+LineCount0Strict+
+             ThoracicCount+NeuroCount+AbdominalCount+VascularCount+CardiacCount+
+             MSKCount+NumScannersUsedToday+DayOfWeek+ numberapptstoday,data = wait_train2)
+summary(model2)
+plot(model2)
+
+
