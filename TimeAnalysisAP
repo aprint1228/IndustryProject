@@ -14,7 +14,10 @@ weekday(waitdata$DayOfWeek)
 #Next, I will visualize days, months, according to their wait time 
 hist(weekday)
 hist(month)
-hist(days)
+
+hist(days, xlab = 'Day of Year', ylab = 'Count of Appointments', 
+     main = 'Number of Appointments by Day', col = 'blue')
+     
 #there seems to be minimal difference in the number of scheduled appointments on each day of the week but there is a 
 #visible drop in appointments in July through October, this is confirmed with the histogram made for days of the week. 
 #This warrants further exploration. 
